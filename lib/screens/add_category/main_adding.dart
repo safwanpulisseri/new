@@ -46,9 +46,12 @@ class _ScreenMainAddingState extends State<ScreenMainAdding> {
       description: description,
       date: date,
       category: selectedCategory,
+      isIncome: true, // or false based on whether it's an income or expense
     );
     // Call the function to add the transaction to the database
-    await TransactionModelFunctions().addTransaction(newTransaction);
+    await TransactionModelFunctions()
+        .addTransaction(newTransaction, selectedRadio);
+
     // if (isIncome) {
     //   await calculateTotalIncome();
     // } else if (isExpense) {
@@ -523,14 +526,14 @@ class _ScreenMainAddingState extends State<ScreenMainAdding> {
               DropdownMenuItem(
                 child: Row(
                   children: [
-                    // Icon(Icons.add),
-                    // SizedBox(
-                    //   width: 10,
-                    // ),
-                    // Text('Add Category'),
+                    Icon(Icons.add),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text('Add Category'),
                   ],
                 ),
-                //value: 'Add Category',
+                value: 'Add Category',
               ),
             ),
           selectedItemBuilder: (context) {
@@ -606,6 +609,7 @@ class _ScreenMainAddingState extends State<ScreenMainAdding> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: Text('Add Category'),
           content: TextField(),
           actions: [

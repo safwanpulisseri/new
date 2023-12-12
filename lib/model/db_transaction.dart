@@ -20,11 +20,20 @@ class TransactionModel extends HiveObject {
   @HiveField(4)
   final CategoryModel category;
 
+  @HiveField(5)
+  bool isIncome; // True if income, False if expense
+
   TransactionModel({
     required this.id,
     required this.amount,
     required this.description,
     required this.date,
     required this.category,
+    required this.isIncome,
   });
+
+  // Setter for isIncome
+  void setIncome(bool income) {
+    isIncome = income;
+  }
 }

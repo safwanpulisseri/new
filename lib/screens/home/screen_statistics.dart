@@ -212,9 +212,33 @@ class _ScreenStatisticsState extends State<ScreenStatistics> {
                                 ),
                               ),
                             ),
-                            trailing: Text(
-                              '${transaction.amount}',
-                              style: TextStyle(fontSize: 20),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '${transaction.amount}',
+                                  style: TextStyle(
+                                    color: transaction.isIncome
+                                        ? Colors.green
+                                        : Colors.red,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 0,
+                                ),
+                                transaction.isIncome
+                                    ? Image.asset(
+                                        'assets/icon_income copy.png',
+                                        height: 20,
+                                        width: 20,
+                                      )
+                                    : Image.asset(
+                                        'assets/icon_expense-2.png',
+                                        height: 20,
+                                        width: 20,
+                                      )
+                              ],
                             ),
                           ),
                         ),

@@ -166,6 +166,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                           description: descriptionController.text,
                           date: transaction!.date,
                           category: transaction!.category,
+                          isIncome: transaction!
+                              .isIncome, // or false based on whether it's an income or expense
                         );
                         await TransactionModelFunctions().updateTransaction(
                             transaction!.id, updatedTransaction);

@@ -47,8 +47,15 @@ class TransactionModelFunctions {
   // totalExpenseNotifier.value = totalExpense;
   // }
 
-  Future<void> addTransaction(TransactionModel money) async {
+  Future<void> addTransaction(
+      TransactionModel money, String selectedRadio) async {
     final box1 = await Hive.openBox<TransactionModel>('transactionBox');
+    // Check the selectedRadio value to determine if it's income or expense
+    if (selectedRadio == 'Option 1') {
+      money.isIncome = true; // Mark the transaction as income
+    } else {
+      money.isIncome = false; // Mark the transaction as expense
+    }
     await box1.put(money.id, money);
     transactionModelNotifier.value.add(money);
     await box.put(money.id, money);

@@ -14,6 +14,7 @@ import 'package:rupee_app/screens/home/details_transaction.dart';
 import 'package:rupee_app/screens/home/edit_transaction.dart';
 
 import 'package:rupee_app/screens/home/see_all.dart';
+import 'package:rupee_app/screens/widgets/time.dart';
 
 class ScreenHome extends StatelessWidget {
   const ScreenHome({super.key});
@@ -55,6 +56,16 @@ class ScreenHome extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Text(
+                            '${GreetingWidget().getGreeting()},',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
                           ValueListenableBuilder<Box<UserModel>>(
                             valueListenable:
                                 Hive.box<UserModel>('userProfileBox')
@@ -70,11 +81,11 @@ class ScreenHome extends StatelessWidget {
                                     profileDetailsList.first;
                                 // Check if the user's name is not null or empty
                                 if (profileDetails.name != null &&
-                                    profileDetails.name!.isNotEmpty) {
+                                    profileDetails.name.isNotEmpty) {
                                   return Row(
                                     children: [
                                       Text(
-                                        'Hi, ${profileDetails.name}',
+                                        '${profileDetails.name}',
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 20),
                                       ),
@@ -492,9 +503,33 @@ class ScreenHome extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  trailing: Text(
-                                    '${transaction.amount}',
-                                    style: TextStyle(fontSize: 20),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        '₹${transaction.amount}',
+                                        style: TextStyle(
+                                          color: transaction.isIncome
+                                              ? Colors.green
+                                              : Colors.red,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 0,
+                                      ),
+                                      transaction.isIncome
+                                          ? Image.asset(
+                                              'assets/icon_income copy.png',
+                                              height: 20,
+                                              width: 20,
+                                            )
+                                          : Image.asset(
+                                              'assets/icon_expense-2.png',
+                                              height: 20,
+                                              width: 20,
+                                            )
+                                    ],
                                   ),
                                 ),
                               ),

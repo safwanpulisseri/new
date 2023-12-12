@@ -44,7 +44,9 @@ class TransactionDetailScreen extends StatelessWidget {
               ),
               trailing: Text(
                 '${transaction.amount}',
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(
+                    color: transaction.isIncome ? Colors.green : Colors.red,
+                    fontSize: 20),
               ),
             ),
             Padding(
