@@ -22,7 +22,7 @@ class ScreenIntro extends StatelessWidget {
                   )
                 ],
               ),
-              height: 500,
+              height: 400,
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(

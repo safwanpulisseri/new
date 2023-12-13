@@ -7,45 +7,41 @@ import 'package:rupee_app/model/db_transaction.dart';
 
 final ValueNotifier<List<TransactionModel>> transactionModelNotifier =
     ValueNotifier<List<TransactionModel>>([]);
-// double totalIncome = 0.0;
-// double totalExpense = 0.0;
 
 class TransactionModelFunctions {
   final box = Hive.box<TransactionModel>('transactionBox');
 
-  // final ValueNotifier<double> totalIncomeNotifier = ValueNotifier<double>(0.0);
-  // final ValueNotifier<double> totalExpenseNotifier = ValueNotifier<double>(0.0);
+  double calculateTotalIncome() {
+    double totalIncome = 0.0;
+    final incomeTransactions =
+        box.values.where((transaction) => transaction.isIncome);
+    totalIncome = incomeTransactions.fold<double>(
+        0, (previousValue, element) => previousValue + element.amount);
+    return totalIncome;
+  }
 
-  // double totalIncome = 0.0;
-  // double totalExpense = 0.0;
+  double calculateTotalExpense() {
+    double totalExpense = 0.0;
+    final expenseTransactions =
+        box.values.where((transaction) => !transaction.isIncome);
+    totalExpense = expenseTransactions.fold<double>(
+        0, (previousValue, element) => previousValue + element.amount);
+    return totalExpense;
+  }
 
-  // void updateTotalIncome(double newIncome) {
-  //   totalIncome += newIncome;
-  // }
+  // Store total income and total expense in the database
+  Future<void> storeTotalAmounts() async {
+    final totalIncome = calculateTotalIncome();
+    final totalExpense = calculateTotalExpense();
 
-  // void updateTotalExpense(double newExpense) {
-  //   totalExpense += newExpense;
-  // }
+    final box = await Hive.openBox<double>('totalAmountsBox');
+    await box.put('totalIncome', totalIncome);
+    await box.put('totalExpense', totalExpense);
+  }
 
   List<TransactionModel> transactionDetailsNotifier = [];
 
   final box1 = Hive.box<TransactionModel>('transactionBox');
-  // Method to update total income and expense
-  // void updateTotalValues(List<TransactionModel> transactions) {
-  //   double totalIncome = 0.0;
-  //   double totalExpense = 0.0;
-
-  //   for (var transaction in transactions) {
-  //     if (transaction.type == true) {
-  //       totalIncome += transaction.amount;
-  //     } else {
-  //       totalExpense += transaction.amount;
-  //     }
-  //   }
-
-  // totalIncomeNotifier.value = totalIncome;
-  // totalExpenseNotifier.value = totalExpense;
-  // }
 
   Future<void> addTransaction(
       TransactionModel money, String selectedRadio) async {
@@ -60,22 +56,6 @@ class TransactionModelFunctions {
     transactionModelNotifier.value.add(money);
     await box.put(money.id, money);
 
-    // if (money.type) {
-    //   // Income transaction
-    //   totalIncome += money.amount;
-    // } else {
-    //   // Expense transaction
-    //   totalExpense += money.amount;
-    // }
-
-    //notifyListeners();
-    // // Update respective total notifier based on income or expense
-    // if (money.isIncome) {
-    //   updateTotalIncome(money.amount);
-    // } else if (money.isExpense) {
-    //   updateTotalExpense(money.amount);
-    // }
-
     log('Added Transaction Details to Database');
     transactionModelNotifier.value = box.values.toList();
     transactionModelNotifier.notifyListeners();
@@ -86,19 +66,18 @@ class TransactionModelFunctions {
     transactionModelNotifier.value.clear();
     transactionModelNotifier.value.addAll(box1.values);
     transactionModelNotifier.notifyListeners();
-    //   final box = await Hive.openBox<TransactionModel>('transactionBox');
-    //   transactionModelNotifier.value = box.values.toList();
-    //   // Calculate total income and expense when retrieving all transactions
-    //  // calculateTotalIncomeAndExpense();
-    //   transactionModelNotifier.notifyListeners();
   }
 
   Future<void> updateTransaction(
       String transactionId, TransactionModel updatedTransaction) async {
     final box = await Hive.openBox<TransactionModel>('transactionBox');
     await box.put(transactionId, updatedTransaction);
+
     transactionModelNotifier.value = box.values.toList();
     transactionModelNotifier.notifyListeners();
+
+    // Update total income and total expense after updating a transaction
+    storeTotalAmounts();
   }
 
   Future<void> deleteTransaction(String transactionId) async {
@@ -106,41 +85,10 @@ class TransactionModelFunctions {
     await box.delete(transactionId);
     transactionModelNotifier.value = box.values.toList();
     transactionModelNotifier.notifyListeners();
+
+    // Update total income and total expense after deleting a transaction
+    storeTotalAmounts();
   }
-
-  // void notifyListeners() {
-  //   totalIncomeNotifier.value = totalIncome;
-  //   totalExpenseNotifier.value = totalExpense;
-  //   transactionModelNotifier.value = box.values.toList();
-  //   transactionModelNotifier.notifyListeners();
-  // }
-
-  // static void calculateTotalIncomeAndExpense() {
-
-  //   transactionModelNotifier.value.forEach((transaction) {
-  //     if (transaction.type) {
-  //       totalIncome += transaction.amount;
-  //     } else {
-  //       totalExpense += transaction.amount;
-  //     }
-  //   });
-  //   totalIncome = transactionModelNotifier.value
-  //       .where((transaction) => transaction.type)
-  //       .fold<double>(
-  //           0, (previousValue, element) => previousValue + element.amount);
-
-  //   totalExpense = transactionModelNotifier.value
-  //       .where((transaction) => !transaction.type)
-  //       .fold<double>(
-  //           0, (previousValue, element) => previousValue + element.amount);
-  // }
-  // void updateTotalIncome(double newIncome) {
-  //   totalIncomeNotifier.value += newIncome;
-  // }
-
-  // void updateTotalExpense(double newExpense) {
-  //   totalExpenseNotifier.value += newExpense;
-  // }
 
   // Future<void> saveChanges(String transactionId) async {
   //  // TransactionModel updatedTransaction = getUpdatedTransaction();

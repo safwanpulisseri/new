@@ -21,16 +21,27 @@ class ScreenHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // // Define your ValueNotifiers here
-    // final ValueNotifier<double> totalIncomeNotifier =
-    //     ValueNotifier<double>(0.0);
-    // final ValueNotifier<double> totalExpenseNotifier =
-    //     ValueNotifier<double>(0.0);
-    // double totalIncome = 0.0;
-    // double totalExpense = 0.0;
+    final ValueNotifier<double> totalIncomeNotifier =
+        ValueNotifier<double>(0.0);
+    final ValueNotifier<double> totalExpenseNotifier =
+        ValueNotifier<double>(0.0);
+
+    // Function to fetch total income and total expense
+    Future<void> fetchTotalAmounts() async {
+      final TransactionModelFunctions transactionFunctions =
+          TransactionModelFunctions();
+      final double totalIncome = transactionFunctions.calculateTotalIncome();
+      final double totalExpense = transactionFunctions.calculateTotalExpense();
+
+      totalIncomeNotifier.value = totalIncome;
+      totalExpenseNotifier.value = totalExpense;
+    }
+
+    // Fetch total amounts when the screen builds
+    fetchTotalAmounts();
 
     // Fetch transaction details from the database
-    // Here, you might use transactionModelNotifier or another way to fetch data
+    // Here, might use transactionModelNotifier or another way to fetch data
     Future<void> deleteTransaction(String transactionId) async {
       await TransactionModelFunctions().deleteTransaction(transactionId);
     }
@@ -261,115 +272,124 @@ class ScreenHome extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Card(
-                        elevation: 5,
-                        child: Container(
-                          height: 120,
-                          width: 160,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Colors.black.withOpacity(0.1),
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white,
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Income',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.black,
-                                    ),
+                      ValueListenableBuilder<double>(
+                        valueListenable: totalIncomeNotifier,
+                        builder: (context, totalIncome, child) {
+                          return Card(
+                            elevation: 5,
+                            child: Container(
+                              height: 120,
+                              width: 160,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.black.withOpacity(0.1),
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                height: 10,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Income',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '₹ $totalIncome',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.center,
-                              //   children: [
-                              //     ValueListenableBuilder<double>(
-                              //       valueListenable: TransactionModelFunctions()
-                              //           .totalIncomeNotifier,
-                              //       builder: (context, totalIncome, child) {
-                              //         return Text('Total Income: $totalIncome');
-                              //       },
-                              //     )
-                              //   ],
-                              // )
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       ),
                       SizedBox(
                         width: 10,
                       ),
-                      Card(
-                        elevation: 5,
-                        child: Container(
-                          height: 120,
-                          width: 160,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Colors.black.withOpacity(0.1),
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white,
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Expense',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.black,
-                                    ),
+                      ValueListenableBuilder(
+                        valueListenable: totalExpenseNotifier,
+                        builder: (context, totalExpense, child) {
+                          return Card(
+                            elevation: 5,
+                            child: Container(
+                              height: 120,
+                              width: 160,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.black.withOpacity(0.1),
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                height: 10,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Expense',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '₹ $totalExpense',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.center,
-                              //   children: [
-                              //     ValueListenableBuilder<double>(
-                              //       valueListenable: TransactionModelFunctions()
-                              //           .totalExpenseNotifier,
-                              //       builder: (context, totalExpense, child) {
-                              //         return Text(
-                              //             'Total Expense: $totalExpense');
-                              //       },
-                              //     )
-                              //   ],
-                              // )
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       )
                     ],
                   ),
